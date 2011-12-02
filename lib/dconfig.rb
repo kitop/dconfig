@@ -16,7 +16,7 @@ module Dconfig
     def redis=(server)
       config = YAML::load(File.open("#{Rails.root}/config/redis.yml"))[Rails.env]
       redis  = Redis.new(:host => config['host'], :port => config['port'])
-      @db    = config['namespace'].nil? ? 'dconfig' : config['namespace']
+      @key   = config['namespace'].nil? ? 'dconfig' : config['namespace']
       @redis = Redis::Namespace.new(app_name, :redis => redis)
     end
 
@@ -51,7 +51,7 @@ module Dconfig
     end
 
     def create_dconfig_class(yml_file, redis)
-      hash_yml = load_yml(yml_file)
+      hash_yml   = load_yml(yml_file)
       hash_redis = load_from_redis(redis)
 
       add_missed_fields_to_redis(redis, hash_yml)
