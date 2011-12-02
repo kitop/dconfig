@@ -76,6 +76,8 @@ GEM
     rdoc (3.11)
       json (~> 1.4)
     redis (2.2.2)
+    redis-namespace (1.0.3)
+      redis (< 3.0.0)
     rubyzip (0.9.5)
     selenium-webdriver (2.14.0)
       childprocess (>= 0.2.1)
@@ -98,4 +100,5 @@ DEPENDENCIES
   capybara
   rails (= 3.0.10)
   redis (~> 2.2.0)
+  redis-namespace
   sqlite3
