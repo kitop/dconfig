@@ -10,9 +10,22 @@ module Dconfig
   class << self
     def setup!
       yml = get_yml
-      redis = get_redis
       create_dconfig_class(yml, redis)
     end
+
+    def redis=(server)
+      config = YAML::load(File.open("#{Rails.root}/config/redis.yml"))[Rails.env]
+      redis  = Redis.new(:host => config['host'], :port => config['port'])
+      @db    = config['namespace'].nil? ? 'dconfig' : config['namespace']
+      @redis = Redis::Namespace.new(app_name, :redis => redis)
+    end
+
+    def redis
+      return @redis if @redis
+      self.redis = Redis.respond_to?(:connect) ? Redis.connect : "localhost:6379"
+      self.redis
+    end
+
 
     def get_yml
       "#{Rails.root.to_s}/config/dconfig.yml"
@@ -20,12 +33,6 @@ module Dconfig
 
     def app_name
       Rails.application.class.to_s.split("::").first
-    end
-
-    def get_redis
-      config = YAML::load(File.open("#{Rails.root}/config/redis.yml"))[Rails.env]
-      redis = Redis.new(:host => config['host'], :port => config['port'])
-      Redis::Namespace.new(app_name, :redis => redis)
     end
 
     def load_yml(yml_file)
@@ -51,22 +58,17 @@ module Dconfig
 
       hash_redis = load_from_redis(redis)
     end
+
+    def set(field, value)
+      @redis.hsetnx @key, field, value
+    end
+
+    def get(field)
+      @redis.hget @key, field
+    end
+
+    def delete(field)
+      @redis.hget @key, field
+    end
   end # class << self
-
-  def initialize(args)
-    @db  = args[:db]
-    @key = args[:key]
-  end
-
-  def set(field, value)
-    @db.hsetnx @key, field, value
-  end
-
-  def get(field)
-    @db.hget @key, field
-  end
-
-  def delete(field)
-    @db.hget @key, field
-  end
 end
