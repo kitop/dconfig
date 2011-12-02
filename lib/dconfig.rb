@@ -1,0 +1,2 @@
+module Dconfig
+end
