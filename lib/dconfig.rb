@@ -3,10 +3,10 @@ require 'erb'
 require 'redis'
 
 DCONFIG_PATH = "#{File.dirname(__FILE__)}/dconfig"
+
 require "#{DCONFIG_PATH}/railtie.rb"
 
 module Dconfig
-  class UndefinedDconfig < StandardError; end
   class << self
     def setup!
       yml = get_yml
@@ -50,17 +50,23 @@ module Dconfig
       add_missed_fields_to_redis(redis, hash_yml)
 
       hash_redis = load_from_redis(redis)
-
-      klass = Object.const_set('DConfig', Class.new)
-
-      hash_redis.each do |key,value|
-        klass.define_singleton_method(key){ value }
-      end
-      klass.class_eval do
-        def self.method_missing(method_id,*args)
-          raise UndefinedDconfig, "#{method_id} is not defined in #{self.to_s}"
-        end
-      end
     end
   end # class << self
+
+  def initialize(args)
+    @db  = args[:db]
+    @key = args[:key]
+  end
+
+  def set(field, value)
+    @db.hsetnx @key, field, value
+  end
+
+  def get(field)
+    @db.hget @key, field
+  end
+
+  def delete(field)
+    @db.hget @key, field
+  end
 end
