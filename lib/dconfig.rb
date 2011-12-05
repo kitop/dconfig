@@ -67,6 +67,10 @@ module Dconfig
       @redis.hget @key, field
     end
 
+    def get_boolean(field)
+      @redis.hget(@key, field) != '0'
+    end
+
     def delete(field)
       @redis.hget @key, field
     end
