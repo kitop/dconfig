@@ -74,5 +74,16 @@ module Dconfig
     def delete(field)
       @redis.hget @key, field
     end
+
+    def method_missing(method, *args, &block)
+      return self.send method, *args, &block if self.respond_to? method
+      method_name = method.to_s
+
+      if method_name =~ /=/
+        return self.set method_name.gsub("=", ""), args.first
+      else
+        return self.get method_name
+      end
+    end
   end # class << self
 end
