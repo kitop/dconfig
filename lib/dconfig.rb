@@ -60,7 +60,7 @@ module Dconfig
     end
 
     def set(field, value)
-      @redis.hsetnx @key, field, value
+      @redis.hset @key, field, value
     end
 
     def get(field)
