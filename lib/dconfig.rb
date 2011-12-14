@@ -16,8 +16,8 @@ module Dconfig
     def redis=(server)
       config = YAML::load(File.open("#{Rails.root}/config/redis.yml"))[Rails.env]
       redis  = Redis.new(host: config['host'], port: config['port'], password: config['password'], thread_safe: true, db: (config['db'] || 0 ))
-      @key   = config['namespace'].nil? ? 'dconfig' : config['namespace']
-      @redis = Redis::Namespace.new(@key || app_name, :redis => redis)
+      @key   = 'dconfig'
+      @redis = Redis::Namespace.new(config['namespace'] || app_name, :redis => redis)
     end
 
     def redis
