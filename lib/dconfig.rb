@@ -79,8 +79,8 @@ module Dconfig
       return self.send method, *args, &block if self.respond_to? method
       method_name = method.to_s
 
-      if method_name =~ /=/
-        return self.set method_name.gsub("=", ""), args.first
+      if method_name =~ /=$/
+        return self.set method_name.sub(/=$/, ""), args.first
       else
         return self.get method_name
       end
