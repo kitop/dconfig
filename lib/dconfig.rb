@@ -72,7 +72,7 @@ module Dconfig
     end
 
     def delete(field)
-      @redis.hget @key, field
+      @redis.hdel @key, field
     end
 
     def method_missing(method, *args, &block)
