@@ -63,8 +63,20 @@ module Dconfig
       @redis.hset @key, field, value
     end
 
+    def mset(hash)
+      @redis.hmset @key, hash.flatten
+    end
+
     def get(field)
       @redis.hget @key, field
+    end
+
+    def mget(*fields)
+      {}.tap do
+        @redis.hmget(@key, fields).each_with_index do |value, index|
+          r[fields[index]] = value
+        end
+      end
     end
 
     def get_boolean(field)
