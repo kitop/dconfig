@@ -1,7 +1,7 @@
-require 'rails'
+require 'railtie'
 require 'dconfig'
 
-module DCONFIG
+module Dconfig
   class Railtie < Rails::Railtie
     config.before_configuration do
       Dconfig.setup!
