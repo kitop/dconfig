@@ -1,100 +1,89 @@
-require 'yaml'
-require 'erb'
 require 'redis'
-
 
 require "dconfig/railtie" if defined? Rails
 
 module Dconfig
-  class << self
-    def setup!
-      yml = get_yml
-      create_dconfig_class(yml, redis)
-    end
+  extend self
 
-    def redis=(server)
-      config = YAML::load(File.open("#{Rails.root}/config/redis.yml"))[Rails.env]
-      redis  = Redis.new(host: config['host'], port: config['port'], password: config['password'], thread_safe: true, db: (config['db'] || 0 ))
-      @key   = 'dconfig'
-      @redis = Redis::Namespace.new(config['namespace'] || app_name, :redis => redis)
-    end
+  attr_accessor :key
+  @key = "dconfig"
 
-    def redis
-      return @redis if @redis
-      self.redis = Redis.respond_to?(:connect) ? Redis.connect : "localhost:6379"
-      self.redis
-    end
-
-
-    def get_yml
-      "#{Rails.root.to_s}/config/dconfig.yml"
-    end
-
-    def app_name
-      Rails.application.class.to_s.split("::").first
-    end
-
-    def load_yml(yml_file)
-      erb = ERB.new(File.read(yml_file)).result
-      YAML.load(erb).to_hash[Rails.env]
-    end
-
-    def load_from_redis(redis)
-      redis.hgetall('rdconfig')
-    end
-
-    def add_missed_fields_to_redis(redis, hash_yml)
-      hash_yml.each do |field, value|
-        redis.hsetnx 'dconfig', field, value
-      end
-    end
-
-    def create_dconfig_class(yml_file, redis)
-      hash_yml   = load_yml(yml_file)
-      hash_redis = load_from_redis(redis)
-
-      add_missed_fields_to_redis(redis, hash_yml)
-
-      hash_redis = load_from_redis(redis)
-    end
-
-    def set(field, value)
-      @redis.hset @key, field, value
-    end
-
-    def mset(hash)
-      @redis.hmset @key, hash.flatten
-    end
-
-    def get(field)
-      @redis.hget @key, field
-    end
-
-    def mget(*fields)
-      {}.tap do
-        @redis.hmget(@key, fields).each_with_index do |value, index|
-          r[fields[index]] = value
-        end
-      end
-    end
-
-    def get_boolean(field)
-      @redis.hget(@key, field) != '0'
-    end
-
-    def delete(field)
-      @redis.hdel @key, field
-    end
-
-    def method_missing(method, *args, &block)
-      return self.send method, *args, &block if self.respond_to? method
-      method_name = method.to_s
-
-      if method_name =~ /=$/
-        return self.set method_name.sub(/=$/, ""), args.first
+  # Accepts:
+  #   1. A 'hostname:port' String
+  #   2. A 'hostname:port:db' String (to select the Redis db)
+  #   3. A Redis URL String 'redis://host:port'
+  #   4. An instance of `Redis`, `Redis::Client`, `Redis::DistRedis`,
+  #      or `Redis::Namespace`.
+  def redis=(server)
+    if server.is_a? String
+      if server =~ /redis\:\/\//
+        @redis = Redis.connect(:url => server, :thread_safe => true)
       else
-        return self.get method_name
+        host, port, db = server.split(':')
+        @redis = Redis.new(:host => host, :port => port,
+                          :thread_safe => true, :db => db)
+      end
+    else
+      @redis = server
+    end
+  end
+
+  def redis
+    return @redis if @redis
+    self.redis = Redis.respond_to?(:connect) ? Redis.connect : "localhost:6379"
+    self.redis
+  end
+
+  def add_missing_fields(hash)
+    hash.each do |field, value|
+      redis.hsetnx @key, field, value
+    end
+  end
+
+  def get_all
+    redis.hgetall(@key)
+  end
+
+  def has_key?(field)
+    @redis.hexists @key, field
+  end
+
+  def set(field, value)
+    @redis.hset @key, field, value
+  end
+
+  def mset(hash)
+    @redis.hmset @key, hash.flatten
+  end
+
+  def get(field)
+    @redis.hget @key, field
+  end
+
+  def mget(*fields)
+    {}.tap do
+      @redis.hmget(@key, fields).each_with_index do |value, index|
+        r[fields[index]] = value
       end
     end
-  end # class << self
+  end
+
+  def get_boolean(field)
+    @redis.hget(@key, field) != '0'
+  end
+
+  def delete(field)
+    @redis.hdel @key, field
+  end
+
+  def method_missing(method, *args, &block)
+    return self.send method, *args, &block if self.respond_to? method
+    method_name = method.to_s
+
+    if method_name =~ /=$/
+      return self.set method_name.sub(/=$/, ""), args.first
+    else
+      return self.get method_name
+    end
+  end
 end
