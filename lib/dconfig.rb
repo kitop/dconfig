@@ -2,9 +2,8 @@ require 'yaml'
 require 'erb'
 require 'redis'
 
-DCONFIG_PATH = "#{File.dirname(__FILE__)}/dconfig"
 
-require "#{DCONFIG_PATH}/railtie.rb"
+require "dconfig/railtie" if defined? Rails
 
 module Dconfig
   class << self
