@@ -7,7 +7,9 @@ Gem::Specification.new do |gem|
   gem.description = "Dynamic Configuration stored on redis"
   gem.authors = [%q{maxjgon}]
 
-  gem.files = Dir["{app,lib,config}/**/*"] + ["MIT-LICENSE", "Rakefile", "Gemfile", "README.rdoc"]
+  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  gem.files         = `git ls-files`.split("\n")
+  gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
 
   gem.add_dependency 'railties', ['>= 3.0.0']
   gem.add_dependency 'redis', ['~> 2.2.2']
