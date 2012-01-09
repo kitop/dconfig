@@ -14,15 +14,15 @@ module Dconfig
         end
       end
 
+      #namespace the key
+      Dconfig.key = Rails.application.class.to_s.split("::").first + ":dconfig"
+
       base_keys_file = File.join(Rails.root.to_s, "config", "dconfig.yml")
       if File.exists? base_key_file
         base_keys = load_yml(redis_file)
 
         Dconfig.add_missing_fields(base_keys)
       end
-
-      #namespace the key
-      Dconfig.key = Rails.application.class.to_s.split("::").first + ":dconfig"
     end
   end
 
