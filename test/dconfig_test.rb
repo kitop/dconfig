@@ -65,9 +65,18 @@ context "Dconfig" do
 
   test "can get a boolean value" do 
     key = "boolean"
+    assert_equal false, Dconfig.get_boolean(key)
     Dconfig.set key, 1
     assert_equal true, Dconfig.get_boolean(key)
     Dconfig.set key, 0
+    assert_equal false, Dconfig.get_boolean(key)
+  end
+
+  test "can set a boolean value" do
+    key = "setboolean"
+    Dconfig.set_boolean key, true
+    assert_equal true, Dconfig.get_boolean(key)
+    Dconfig.set_boolean key, false
     assert_equal false, Dconfig.get_boolean(key)
   end
 
