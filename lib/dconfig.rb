@@ -53,7 +53,7 @@ module Dconfig
   end
 
   def mset(hash)
-    @redis.hmset @key, hash.flatten
+    @redis.hmset @key, *hash.flatten
   end
 
   def get(field)
@@ -61,8 +61,8 @@ module Dconfig
   end
 
   def mget(*fields)
-    {}.tap do
-      @redis.hmget(@key, fields).each_with_index do |value, index|
+    {}.tap do |r|
+      @redis.hmget(@key, *fields).each_with_index do |value, index|
         r[fields[index]] = value
       end
     end

@@ -1,22 +1,53 @@
-# Configure Rails Envinronment
-ENV["RAILS_ENV"] = "test"
+require 'dconfig'
+require 'test/unit'
 
-require File.expand_path("../dummy/config/environment.rb",  __FILE__)
-require "rails/test_help"
+# make sure we can run redis
+#
+if !system("which redis-server")
+  puts '', "** can't find `redis-server` in your path"
+  abort ''
+end
 
-ActionMailer::Base.delivery_method = :test
-ActionMailer::Base.perform_deliveries = true
-ActionMailer::Base.default_url_options[:host] = "test.com"
+dir = File.dirname(File.expand_path(__FILE__))
 
-Rails.backtrace_cleaner.remove_silencers!
+at_exit do
+  next if $!
 
-# Configure capybara for integration testing
-require "capybara/rails"
-Capybara.default_driver   = :rack_test
-Capybara.default_selector = :css
+  if defined?(MiniTest)
+    exit_code = MiniTest::Unit.new.run(ARGV)
+  else
+    exit_code = Test::Unit::AutoRunner.run
+  end
 
-# Run any available migration
-ActiveRecord::Migrator.migrate File.expand_path("../dummy/db/migrate/", __FILE__)
+  processes = `ps -A -o pid,command | grep [r]edis-test`.split("\n")
+  pids = processes.map { |process| process.split(" ")[0] }
+  puts "Killing test redis server..."
+  `rm -f #{dir}/dump.rdb #{dir}/dump-cluster.rdb`
+  pids.each { |pid| Process.kill("KILL", pid.to_i) }
+  exit exit_code
+end
 
-# Load support files
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
+##
+# test/spec/mini 3
+# http://gist.github.com/25455
+# chris@ozmm.org
+# file:lib/test/spec/mini.rb
+#
+def context(*args, &block)
+  return super unless (name = args.first) && block
+  require 'test/unit'
+  klass = Class.new(defined?(ActiveSupport::TestCase) ? ActiveSupport::TestCase : Test::Unit::TestCase) do
+    def self.test(name, &block) 
+      define_method("test_#{name.gsub(/\W/,'_')}", &block) if block
+    end
+    def self.xtest(*args) end
+    def self.setup(&block) define_method(:setup, &block) end
+    def self.teardown(&block) define_method(:teardown, &block) end
+  end
+  (class << klass; self end).send(:define_method, :name) { name.gsub(/\W/,'_') }
+  klass.class_eval &block
+end
+
+puts "Starting redis for testing at localhost:9736..."
+`redis-server #{dir}/redis-test.conf`
+Dconfig.redis = 'localhost:9736'
