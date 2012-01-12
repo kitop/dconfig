@@ -1,0 +1,83 @@
+body,
+button,
+input,
+select,
+textarea {
+    font-family: "Helvetica Neue", Helvetica, Verdana, Arial, sans-serif;
+}
+html, body{
+  height: 100%;
+}
+body{
+  font-size: 13px;
+  line-height: 1.3;
+  min-height: 100%;
+}
+
+#wrapper{
+  position: relative;
+  min-height: 100%;
+}
+
+#content{
+  min-height: 0;
+  padding: 20px 6% 55px;
+  position: relative;
+}
+
+#footer{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 14px;
+  border-top: 1px solid #CCC;
+  background: #EEE;
+  padding: 10px 0;
+  font-size: 12px;
+}
+#footer p{
+  margin: 0;
+  padding: 0 5%;
+}
+
+#header{
+  border-bottom: 2px solid #CCC;
+  background: #EEE;
+  padding: 10px 5%;
+}
+#header h1{
+  margin: 0;
+}
+#header .key{
+  position: absolute;
+  right: 5%;
+  top: 20px;
+  color: #505050;
+}
+
+table thead tr {
+  border-bottom: 1px solid #DDD;
+}
+
+table tbody tr:nth-of-type(even) {
+  background: #EFEFEF;
+}
+
+table td{
+  padding: 6px 8px;
+}
+
+table td.remove{
+  text-align: center;
+}
+
+#add-new{
+  color: #02C;
+}
+
+table td .inline-remove{
+  cursor: pointer;
+  color: red;
+  font-weight: bold;
+  text-transform: uppercase;
+}

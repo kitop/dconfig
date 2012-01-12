@@ -1,0 +1,42 @@
+<% if @values.empty? %>
+  <p>
+  Woow! Dconfig is empty!
+  <br />
+  Start by adding some values below
+  </p>
+<% else %>
+  <p>
+    Here are all the keys and values actually stored on Dconfig.
+  </p>
+<% end %>
+<form action="<%= u :update %>" method="post">
+  <table id="values">
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Value</th>
+        <th>Remove?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @values.each do |key, value| %>
+        <tr>
+          <td>
+            <strong><%=h key %></strong>
+          </td>
+          <td>
+            <span><%=h value %></span>
+          </td>
+          <td class="remove">
+            <input type="checkbox" value="<%= key %>" name="delete[]" />
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <p>
+    <a href="#" id="add-new"> + Add new field</a>
+    | 
+    <button type="submit">Update changes</button>
+  </p>
+</form>

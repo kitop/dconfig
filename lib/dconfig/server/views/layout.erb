@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dconfig</title>
+    <link href="<%=u 'normalize.css' %>" media="screen" rel="stylesheet" type="text/css">
+    <link href="<%=u 'style.css' %>" media="screen" rel="stylesheet" type="text/css">
+    <script src="<%=u 'jquery-1.7.1.min.js' %>" type="text/javascript"></script>
+    <script src="<%=u 'dconfig.js' %>" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="wrapper"> 
+
+      <div id="header">
+        <h1>
+          Dconfig panel
+        </h1>
+        <span class="key">
+          Using key <em><%= Dconfig.key %></em>
+        </span>
+      </div>
+
+      <div id="content">
+        <%= yield %>
+      </div>
+
+      <div id="footer">
+        <p>
+          Dconfig v<%= Dconfig::VERSION %>
+          |
+          Connected to <%= Dconfig.redis.client.id %> with key <%= Dconfig.key %>
+        </p>
+      </div>
+
+    </div>
+  </body>
+</html>
