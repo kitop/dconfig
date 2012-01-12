@@ -3,9 +3,9 @@ require File.expand_path('../lib/dconfig/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name = "dconfig"
-  gem.summary = "Dynamic Redis Store"
-  gem.description = "Dynamic Configuration stored on redis"
-  gem.authors = [%q{maxjgon}]
+  gem.summary = "Dynamic Settings"
+  gem.description = "Dynamic configuration settings stored on redis"
+  gem.authors = ["Maximialiano Gonzalez", "Esteban Pastorino"]
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
