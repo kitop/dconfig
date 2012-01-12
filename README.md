@@ -32,6 +32,7 @@ Simple:
     Dconfig.delte "your_setting"
 
 It also got a bunch of other methods as 
+
 * `get(key)` Retrieves the value of a key
 * `set(key, value)` Sets the value of a key
 * `mget(key1, key2, key3...)` Multi get
@@ -45,11 +46,11 @@ It also got a bunch of other methods as
 
 You can also set the redis instance via `Dconfig.redis=` 
 which can receive several options:
-* A 'hostname:port' String
-* A 'hostname:port:db' String (to select the Redis db)
-* A Redis URL String 'redis://host:port'
-* An instance of `Redis`, `Redis::Client`, `Redis::DistRedis`, 
-  `Redis::Namespace`.
+
+* A `hostname:port` String
+* A `hostname:port:db` String (to select the Redis db)
+* A Redis URL String `redis://host:port`
+* An instance of `Redis`, `Redis::Client`, `Redis::DistRedis`, `Redis::Namespace`.
 
 And you can also set the main redis key (where the hash is stored). 
 By default it is *dconfig*
@@ -59,6 +60,7 @@ By default it is *dconfig*
 Using it on rails is as simple as requiring it on your Gemfile
 
 You can also customize some settings in an initializer, for example:
+
 ``` ruby
 redis_file = File.join(Rails.root, "config", "redis.yml")
 if File.exists? redis_file
@@ -95,7 +97,10 @@ and edit them as you need.
 You simple need to require 'dconfig/server' and run it as a Rack app.
 
 And as any rack app, it can be mounter in Rails 3 via the config/routes.rb file
-`mount Dconfig::Server.new, :at => "/dconfig"`
+
+``` ruby
+mount Dconfig::Server.new, :at => "/dconfig"
+```
 
 
 Contributing
