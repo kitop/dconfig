@@ -45,24 +45,24 @@ module Dconfig
   end
 
   def has_key?(field)
-    @redis.hexists @key, field
+    redis.hexists @key, field
   end
 
   def set(field, value)
-    @redis.hset @key, field, value
+    redis.hset @key, field, value
   end
 
   def mset(hash)
-    @redis.hmset @key, *hash.flatten
+    redis.hmset @key, *hash.flatten
   end
 
   def get(field)
-    @redis.hget @key, field
+    redis.hget @key, field
   end
 
   def mget(*fields)
     {}.tap do |r|
-      @redis.hmget(@key, *fields).each_with_index do |value, index|
+      redis.hmget(@key, *fields).each_with_index do |value, index|
         r[fields[index]] = value
       end
     end
@@ -73,13 +73,13 @@ module Dconfig
   end
 
   def get_boolean(field)
-    value = @redis.hget(@key, field)
+    value = redis.hget(@key, field)
     value.nil? ? false : value != '0'
   end
 
 
   def delete(field)
-    @redis.hdel @key, field
+    redis.hdel @key, field
   end
 
   def method_missing(method, *args, &block)
