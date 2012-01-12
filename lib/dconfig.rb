@@ -1,7 +1,5 @@
 require 'redis'
 
-require "dconfig/railtie" if defined? Rails
-
 module Dconfig
   extend self
 
