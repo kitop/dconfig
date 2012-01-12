@@ -77,7 +77,7 @@ module Dconfig
     value.nil? ? false : value != '0'
   end
 
-
+  #TODO add support for deleting multiple keys when redis-rb gem accepts it
   def delete(field)
     redis.hdel @key, field
   end
