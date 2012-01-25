@@ -64,7 +64,7 @@ You can also customize some settings in an initializer, for example:
 ``` ruby
 redis_file = File.join(Rails.root, "config", "redis.yml")
 if File.exists? redis_file
-  config = Yaml.load(ERB.new(File.read(redis_file)).result).to_hash[Rails.env]
+  config = YAML.load(ERB.new(File.read(redis_file)).result).to_hash[Rails.env]
   if config.is_a? String
     Dconfig.redis = config
   else
@@ -78,8 +78,8 @@ end
 Dconfig.key = Rails.application.class.to_s.split("::").first + ":dconfig"
 
 base_keys_file = File.join(Rails.root.to_s, "config", "dconfig.yml")
-if File.exists? base_key_file
-  base_keys = Yaml.load(ERB.new(File.read(base_key_file)).result).to_hash[Rails.env]
+if File.exists? base_keys_file
+  base_keys = YAML.load(ERB.new(File.read(base_keys_file)).result).to_hash[Rails.env]
 
   Dconfig.add_missing_fields(base_keys)
 end
