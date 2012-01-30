@@ -67,6 +67,11 @@ table td{
   padding: 6px 8px;
 }
 
+table td.value{
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
 table td.remove{
   text-align: center;
 }

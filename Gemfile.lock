@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dconfig (0.0.1)
+    dconfig (0.1.0)
       redis (~> 2.2.2)
 
 GEM
