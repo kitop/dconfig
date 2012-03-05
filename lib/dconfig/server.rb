@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'erb'
+require 'yaml'
 require 'dconfig'
 require 'dconfig/version'
 
@@ -60,6 +61,18 @@ module Dconfig
         Dconfig.mset pairs
       end
       redirect u("/")
+    end
+
+    get '/dump' do
+      values = Dconfig.get_all
+      if defined?(Rails)
+        values = { Rails.env => values }
+      end
+
+      attachment("#{Dconfig.key}.yml")
+      content_type "text/plain"
+
+      values.to_yaml
     end
 
   end
